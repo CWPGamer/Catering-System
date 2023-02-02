@@ -1,7 +1,12 @@
+choice as integer
 StuEmail: ARRAY [1:5] of string
 StuPWord: ARRAY [1:5] of string
 StaffEmail: ARRAY [1:5] of string
 StaffPWord: ARRAY [1:5] of string
+
+BoxLunch = 500.0
+Patty = 250.0
+CheesePatty = 340.0
 
 Record Student
 	name as string
@@ -19,8 +24,6 @@ EndRecord
 
 Main Function
 Start
-	Declare
-		choice as integer
 	Repeat
 		Print "Choose an option: "
 		Print "1. Sign In, 2. Exit"
@@ -37,20 +40,21 @@ Start
 Stop
 
 Function SignIn()
-	choice as integer
-	Print "1. Sign in as student/parent, 2. Sign in as canteen staff"
-	Print "3. Return to Main Menu"
-	Read choice
-	
-	If (choice == 1) Then
-		call SignInStudent()
-	Else If (choice == 2) Then
-		call SignInStaff()
-	Else IF (choice == 3)
-		return
-	Else
-		Print "Invalid Input"
-	Endif	
+	Repeat
+		Print "1. Sign in as student/parent, 2. Sign in as canteen staff"
+		Print "3. Return to Main Menu"
+		Read choice
+
+		If (choice == 1) Then
+			call SignInStudent()
+		Else If (choice == 2) Then
+			call SignInStaff()
+		Else IF (choice == 3)
+			return
+		Else
+			Print "Invalid Input"
+		Endif
+	Until choice == 3	
 EndFunction
 
 Function SignInStudent()
@@ -74,6 +78,7 @@ Function SignInStudent()
 			Endif
 		Endfor
 	Until success == 1
+	Call Student()
 EndFunction
 
 Function SignInStaff()
@@ -97,4 +102,42 @@ Function SignInStaff()
 			Endif
 		Endfor
 	Until success == 1
-EndFunction	
+	Call Staff()
+EndFunction
+
+Function Student()
+	Repeat
+		Print "1. View Student Info, 2. Place Order"
+		Print "3. Exit"
+		Read choice
+
+		If (choice == 1)
+			Call ViewOwnInfo()
+		Else If (choice == 2)
+			Call PlaceOrder()
+		Else If (choice == 3)
+			return
+		Else
+			Print "Invalid Input"
+		Endif
+	Until choice == 3
+EndFunction
+
+Function ViewOwnInfo()
+	// stuff
+EndFunction
+
+Function EditOwnInfo()
+	// stuff
+EndFunction
+
+Function PlaceOrder()
+	price, totalPrice as real
+
+	Print "ORDER MENU"
+	Print "1. Box Lunches, 2. "
+	Read choice
+
+	if ()
+	
+EndFunction
