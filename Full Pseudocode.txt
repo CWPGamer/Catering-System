@@ -7,6 +7,15 @@ StaffPWord: ARRAY [1:5] of string
 BoxLunch = 500.0
 Patty = 250.0
 CheesePatty = 340.0
+CocoBread = 85.0
+Meatloaf = 350.0
+SpiceBun = 150.0
+MarbleCake = 160.0
+JellyDonut = 120.0
+Danish = 160.0
+CheeseBread = 150.0
+CranWata = 130.0
+CocoCola = 120.0
 
 Record Student
 	name as string
@@ -57,7 +66,7 @@ Function SignIn()
 	Until choice == 3	
 EndFunction
 
-Function SignInStudent()
+SubFunction SignInStudent()
 	email, password as string
 	i, maxSize, success as integer
 	success <-- 0
@@ -72,7 +81,8 @@ Function SignInStudent()
 			
 			If (email == StuEmail[i] AND password == StuPWord[i]) Then
 				Print "Sign in successful!!"
-				success <-- 1			
+				success <-- 1
+				i = maxSize + 1		
 			Else
 				Print "Invalid email"
 			Endif
@@ -81,7 +91,7 @@ Function SignInStudent()
 	Call Student()
 EndFunction
 
-Function SignInStaff()
+SubFunction SignInStaff()
 	email, password as string
 	i, maxSize, success as integer
 	success <-- 0
@@ -96,7 +106,8 @@ Function SignInStaff()
 			
 			If (email == StaffEmail[i] AND password == StaffPWord[i]) Then
 				Print "Sign in successful!!"
-				success <-- 1			
+				success <-- 1
+				i = maxSize + 1			
 			Else
 				Print "Invalid email"
 			Endif
@@ -111,7 +122,7 @@ Function Student()
 		Print "3. Exit"
 		Read choice
 
-		If (choice == 1)
+		If (choice == 1) then
 			Call ViewOwnInfo()
 		Else If (choice == 2)
 			Call PlaceOrder()
@@ -123,21 +134,93 @@ Function Student()
 	Until choice == 3
 EndFunction
 
-Function ViewOwnInfo()
+SubFunction ViewOwnInfo()
 	// stuff
 EndFunction
 
-Function EditOwnInfo()
+SubFunction EditOwnInfo()
 	// stuff
 EndFunction
 
 Function PlaceOrder()
-	price, totalPrice as real
+	price as real
+	success as integer
+	totalPrice = 0.0
 
-	Print "ORDER MENU"
-	Print "1. Box Lunches, 2. "
-	Read choice
+	Repeat
+		Print "WEEKLY LUNCH MENU $500 (Sides: Rice & Peas or Pasta)"
+		Print "Monday: Fried Chk, Fried Fish, Stew Pork (Special)"
+		Print "Tuesday: Fried Chk, Stew Pork, Curry Chk (Special)"
+		Print "Wednesday: Fried Chk, Curry Mutton, Chick Peas (Special)"
+		Print "Thursday: Fried Chk, Barbi-Fry Chk, Curry Chk (Special)"
+		Print "Friday: Fried Chk, Stew Beef, Curry Mutton (Special)"
 
-	if ()
+		Print "1. Monday, 2. Tuesday, 3. Wednesday, 4. Thursday, 5. Friday"
+		Print "6. Finish Order, 7. Exit"
+		Read choice
+
+		Repeat
+			if (choice == 1) then
+				Print "Monday: 1. Fried Chk, 2. Fried Fish, 3. Stew Pork (Special)"
+				Print "0. Go Back"
+				Read choice
+
+				if (choice >= 1 AND choice <= 3) then
+					totalPrice = totalPrice + BoxLunch
+				Endif
+
+			else if (choice == 2) then
+				Print "Tuesday: 1. Fried Chk, 2. Stew Pork, 3. Curry Chk (Special)"
+				Print "0. Go Back"
+				Read choice
+
+				if (choice >= 1 AND choice <= 3) then
+					totalPrice = totalPrice + BoxLunch
+				endif
+			else if (choice == 3) then
+				Print "Wednesday: 1. Fried Chk, 2. Curry Mutton, 3. Chick Peas (Special)"
+				Print "0. Go Back"
+				Read choice
+
+				if (choice >= 1 AND choice <= 3) then
+					totalPrice = totalPrice + BoxLunch
+				endif
+
+			else if (choice == 4) then
+				Print "Thursday: 1. Fried Chk, 2. Barbi-Fry Chk, 3. Curry Chk (Special)"
+				Print "0. Go Back"
+				Read choice
+
+				if (choice >= 1 AND choice <= 3) then
+					totalPrice = totalPrice + BoxLunch
+				endif
+
+			else if (choice == 5) then
+				Print "Friday: 1. Fried Chk, 2. Stew Beef, 3. Curry Mutton (Special)"
+				Print "0. Go Back"
+				Read choice
+
+				if (choice >= 1 AND choice <= 3) then
+					totalPrice = totalPrice + BoxLunch
+				endif
+			endif
+
+		Until (choice == 0)
+
+		if (choice == 6) then
+			success = 1
+		else if (choice == 7) then
+			return
+
+		Endif
+	Until success == 1
+
+			
 	
 EndFunction
+
+
+
+
+// Use Daily Menu
+// Use Weekly Menu
