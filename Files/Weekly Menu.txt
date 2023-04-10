@@ -1,24 +1,19 @@
-MONDAY
-Fried Chicken
-Fried Fish
-Stew Pork (Special)
+Fried Chicken 500 Monday
+Fried Fish 500 Monday
+Stew Pork 500 Monday
 
-TUESDAY
-Fried Chicken
-Stew Pork
-Curry Chicken (Special)
+Fried Chicken 500 Tuesday
+Stew Pork 500 Tuesday
+Curry Chicken 500 Tuesday
 
-WEDNESDAY
-Fried Chicken
-Curry Mutton
-Chick Peas (Special)
+Fried Chicken 500 Wednesday
+Curry Mutton 500 Wednesday
+Chick Peas 500 Wednesday
 
-THURSDAY
-Fried Chicken
-Barbi-Fry Chicken
-Curry Chicken (Special)
+Fried Chicken 500 Thursday
+Barbi-Fry Chicken 500 Thursday
+Curry Chicken 500 Thursday
 
-FRIDAY
-Fried Chicken
-Stew Beef
-Curry Mutton (Special)
+Fried Chicken 500 Friday
+Stew Beef 500 Friday
+Curry Mutton 500 Friday

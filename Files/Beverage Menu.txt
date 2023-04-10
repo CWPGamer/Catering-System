@@ -1,0 +1,7 @@
+Cran-Wata 130
+Coca-Cola 120
+Gatorade 185
+Freshhh 160
+Bag Juice 50
+Water 100
+Tea 110

@@ -1,0 +1,6 @@
+Beef Patty 250
+Chicken Patty 250
+Soy Patty 250
+Cheese Patty 340
+Meatloaf 350
+Coco Bread 85

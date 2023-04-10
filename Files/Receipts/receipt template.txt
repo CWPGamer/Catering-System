@@ -1,0 +1,17 @@
+JC Catering System
+
+Name: Chad Wilson
+ID: STU1038
+Date: Jun 23, 2023
+Time: 10:26 am
+
+Monday
+
+Fried Chicken - $500.00
+Jelly Donut - $120.00
+Cran-Wata - $130.00
+
+Total Amount: $750.00
+Amount Tendered: $750.00
+
+Remaining Balance: $2250.00

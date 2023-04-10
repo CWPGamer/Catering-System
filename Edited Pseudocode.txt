@@ -563,8 +563,8 @@ EndFunction
 
 Function Staff()
 	Repeat
-		Print "1. View Student Database, 2. View Lunch Info"
-		Print "3. View Lunch Orders, 0. Return to Main Menu"
+		Print "1. View Student Database, 2. Search Student Record"
+		Print "0. Return to Main Menu"
 		Read choice
 
 		Case choice OF
@@ -588,77 +588,4 @@ SubFunction ViewStuDatabase()
 		Print stu.name, stu.email, stu.grade, stu.ID
 	Endwhile
 	CLOSEFILE sturecords.txt
-EndFunction
-
-SubFunction ViewLunchInfo()
-	Declare c as character
-	OPENFILE Lunch Menu.txt FOR READ
-
-	While (READFILE Lunch Menu.txt, c <> -1) DO
-		Print call
-	Endwhile
-	CLOSEFILE Lunch Menu.txt
-EndFunction
-
-// To be completed
-SubFunction ViewLunchOrders()
-	// stuff
-EndFunction
-
-Function Admin()
-	Repeat
-		Print "1. View Student Database, 2. Edit Student Database"
-		Print "1. View Staff Database, 2. Edit Staff Database"
-		Print "5. View Lunch Info, 6. Edit Lunch Info
-		Print "7. Return to Main Menu"
-		Read choice
-
-		Case choice OF
-			Case 1: call AdminViewStuDatabase()
-			Case 2: call EditStuDatabase()
-			Case 3: call ViewStaffDatabase()
-			Case 4: call EditStaffDatabase()
-			Case 5: call ViewLunchInfo()
-			Case 6: call EditLunchInfo()
-			Case 7: "Returning to Main Menu"
-		OTHERWISE
-			Print "Invalid Input: Select 1 to 7 only"
-		ENDCASE
-	Until choice = 7
-	return
-EndFunction
-
-SubFunction AdminViewStuDatabase()
-	Declare stu as STUDENT
-	OPENFILE sturecords.txt FOR READ
-
-	Print "Name			Email  			Grade  		ID		Pay Method		Balance"
-	While (READFILE sturecords.txt, stu.name, stu.email, stu.grade, stu.ID, stu.payMethod, stu.balance <> -1) DO
-		Print stu.name, stu.email, stu.grade, stu.ID, stu.payMethod, stu.balance
-	Endwhile
-	CLOSEFILE sturecords.txt
-EndFunction
-
-// To be completed
-SubFunction EditStuDatabase()
-	//stuff
-EndFunction
-
-SubFunction ViewStaffDatabase()
-	Declare staff as STAFF
-	OPENFILE staffrecords.txt FOR READ
-
-	Print "Name			Email  		ID		Job"
-	While (READFILE staffrecords.txt, staff.name, staff.email, staff.ID, staff.jobPos <> -1) DO
-		Print staff.name, staff.email, staff.ID, staff.jobPos
-	Endwhile
-	CLOSEFILE staffrecords.txt
-EndFunction
-// To be completed
-SubFunction EditStaffDatabase()
-	//stuff
-EndFunction
-// To be completed
-SubFunction EditLunchInfo()
-	//stuff
 EndFunction
