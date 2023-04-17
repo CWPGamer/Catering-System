@@ -2,7 +2,7 @@
 
 This project serves as the Programming Component of our CAPE Computer Science Internal Assessment.
 
-## Module Breakdown (80% Complete)
+## Module Breakdown (95% Complete)
 
 1. [x] Sign In
     - [x] Sign In Student
@@ -13,25 +13,16 @@ This project serves as the Programming Component of our CAPE Computer Science In
     - [x] TopUp Balance
 3. [x] Staff
     - [x] View Student Database
-    - [x] View Lunch Info*
-    - [ ] View Lunch Orders
+    - [] Search Student Record
 4. [x] Place Order
     - [x] Payment Process
-        - [x] Print Check
-5. [x] Admin
-    - [x] View Student Database
-    - [ ] Edit Student Database
-    - [x] View Staff Database
-    - [ ] Edit Staff Database
-    - [x] View Lunch Info*
-    - [ ] Edit Lunch Info
+5. [x] Print Check
 
 NB: Modules with an asterisk (*) mean that they are the same.
 
 ## File Names
 
 - sturecords.txt
-- staffrecords.txt
 - lunchmenu.txt
 - weeklymenu.txt
 - pattiesmenu.txt
@@ -46,4 +37,3 @@ NB: Modules with an asterisk (*) mean that they are the same.
 - [x] Add functionality to create file structures in order making and databases
 - [x] Make receipt with the following structure: Name, Date of Transaction, Items, Total, Amount Tendered
 - [x] Payment Methods: Visa, NCB Quisk, Paymaster, PayPal, Cash
-- [x] Create Admin Functionality (Admin Sign in, Editing Databases)
