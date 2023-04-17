@@ -1,96 +1,131 @@
+//Declaring global variables
 choice as integer
+maxSize = 1600
+currSize = 0
+monCount = 0
+tuesCount = 0
+wedCount = 0
+thurCount = 0
+friCount = 0
 
-RECORD STUDENT
-	ID as string
-	fName as string
+// Declaring records
+RECORD DATABASE
+	ID as integer
 	lName as string
+	fName as string
 	grade as integer
 	payMethod as string
 	balance as real
 ENDRECORD
 
-RECORD STAFF
-	ID as string
-	name as string
-	jobPos as string
+Declare students: ARRAY[0:maxSize] of DATABASE
+Declare studentUser, temp as DATABASE
+
+RECORD CREDENTIALS
+	ID as integer
+	StuPWords as string
+	accNum as integer
+	PIN as integer
 ENDRECORD
 
-RECORD LUNCH
+Declare stuCreds: ARRAY[0:maxSize] of CREDENTIALS
+Declare userCreds as CREDENTIALS
+Declare temp2 as CREDENTIALS
+
+RECORD FOODITEM
 	name as string
 	price as real
-	availDay as string
 ENDRECORD
 
-RECORD ITEM
-	name as string
-	price as real
-ENDRECORD
+Declare lunches: ARRAY[0:4] of FOODITEM
+Declare patties: ARRAY[0:4] of FOODITEM
+Declare pastries: ARRAY[0:4] of FOODITEM
+Declare drinks: ARRAY[0:4] of FOODITEM
 
 RECORD RECEIPT
-	date as string
 	totalPrice as real
 ENDRECORD
 
 
-
 Main Function
 Start
-	Repeat
-		Print "Choose an option: "
-		Print "1. Sign In, 0. Exit"
-		Read choice
+    p = 0
 
-		CASE choice OF
-			Case 1: call SignIn()
-			Case 0: Print "Exit Successful"
-		OTHERWISE
-			Print "Invalid Input"
-		ENDCASE
-		
-	Until (choice == 0)
+    Print "Welcome to the JC Canteen Catering System"
+
+    p = SignIn()
+
+    If (p = 1) Then
+        call Student()
+    Else If (p = 2) Then
+        call Staff()
+    Endif
+
 Stop
 
 Function SignIn()
-	Declare x as integer
-	Declare ID, password as string
+	Declare x, r, ID as integer
+	Declare password as string
 	Repeat
 		Print "1. Sign in as student/parent, 2. Sign in as canteen staff"
-		Print "3. Return to Main Menu"
+		Print "0. Exit"
 		Read choice
 
 		CASE choice OF
 			Case 1:
-				Print "Enter ID and password"
-				Read ID, password
+				Print "Enter ID and password (up to 16 characters)"
+				Read ID
+                Read password
 
-				x = SignInStudent()
-				If (x = 0) Then
-					Print "Error: Invalid credentials"
-				Else
+				if (length(password) > 16) Then
+					Print "Error: Password exceeds character limit"
 					call Student()
 				Endif
 
-			Case 2: x = SignInStaff()
-				If (x = 1) Then
-					call Staff()
+				x = SignInStudent(ID, password)
+
+				If (x = 0) Then
+					Print "Error: Invalid credentials"                
+                Else if (x = 1) Then
+                    Print "Signed In Successfully!!"
 				Endif
-			Case 3: return
+
+				printf("Retreiving user info...");
+
+				r = UpdateStuInfo(ID)
+
+				If (r = 1) Then
+					Print "User info retrieved!!"
+				Else
+					Print "Error: User Info not found. Try again"
+				Endif
+
+			Case 2:
+                Print "Enter password"
+                x = SignInStaff(password)
+				If (x = 0) Then
+                    Print "Error: invalid credentials"
+				Endif
+                Else if (x = 2) Then
+                    Print "Signed In Successfully!!"
+			Case 0:
+                Print "Exiting Application..."
+				return
 		OTHERWISE
 			Print "Invalid Input"
 		ENDCASE
-
-	Until choice == 3	
+	Until choice == 0 OR x <> 0
+    return x
 EndFunction
 
-SubFunction SignInStudent(ID, password as string)
+SubFunction SignInStudent(ID as integer, password as string)
 	StuID, StuPWord as string
 	success as integer
 	success <-- 0
 	OPENFILE studcreds.txt FOR READ
 	
-	While (READFILE studcreds.txt, StuID, StuPWord <> -1) DO
-
-		If (email == StuID AND password == StuPWord) Then
+	While (READFILE studcreds.txt, StuID, StuPWord <>  " ") DO
+		If (ID == StuID AND password == StuPWord) Then
 			success <-- 1
 			break	
 	Endwhile
@@ -99,149 +134,148 @@ SubFunction SignInStudent(ID, password as string)
 	return success
 EndFunction
 
-SubFunction SignInStaff()
-	email, password as string
-	StaffID, StaffPWord as string
-	i, success as integer
-	success <-- 0
-	OPENFILE staffcreds.txt FOR READ
-	
-	Repeat
-		While (READFILE staffcreds.txt, StaffID, StaffPWord <> -1) DO
-			Print "Enter email address: "
-			Read email
-			Print "Enter password: "
-			Read password
-	
-			If (email == StaffID AND password == StaffPWord) Then
-				Print "Sign in successful!!"
-				success <-- 12
-				break
-			Else
-				Print "Invalid credentials. Try again."
-				Print "1. Continue, 0. Exit"
-				Read choice
+SubFunction SignInStaff(password as string)
+	success as integer
 
-				CASE choice OF
-					Case 1: Call SignInStaff()
-					Case 0: return
-				OTHERWISE
-					Print "Invalid Input"
-				ENDCASE					
-			Endif	
-		Endwhile
-	Until success == 1
+    StaffPWord = "TrueBlueSt@Ff189"
+	success <-- 0
+	
+	If (password == StaffPWord) Then
+		success <-- 2			
+	Endif
+		
 	CLOSEFILE staffcreds.txt
 	return success
 EndFunction
 
-Function Student(email as string)
-	Declare studentUser as STUDENT
-	Declare stu as STUDENT
+Function UpdateStuInfo(ID as integer)
+	success = 0
 	OPENFILE sturecords.txt FOR READ
 	OPENFILE stuinfo.txt FOR WRITE
 
-	While (READFILE sturecords.txt, stu <> -1) DO
-		If (stu.email == email) THEN
-			studentUser <-- stu
+	While (READFILE sturecords.txt, studentUser <> 0) Do
+		If (ID = studentUser.ID) Then
+			success = 1
 			break
 		Endif
 	Endwhile
 
-	WRITEFILE stuinfo.txt, studentUser.name
-	WRITEFILE stuinfo.txt, studentUser.email
-	WRITEFILE stuinfo.txt, studentUser.grade
 	WRITEFILE stuinfo.txt, studentUser.ID
+	WRITEFILE stuinfo.txt, studentUser.lName
+	WRITEFILE stuinfo.txt, studentUser.fName
+	WRITEFILE stuinfo.txt, studentUser.grade
 	WRITEFILE stuinfo.txt, studentUser.payMethod
 	WRITEFILE stuinfo.txt, studentUser.balance
 
 	CLOSEFILE sturecords.txt
 	CLOSEFILE stuinfo.txt
 
+	return success
+EndFunction
+
+Function Student()
 	Repeat
 		Print "1. View Student Info, 2. Edit Payment Info, 3. Place Order"
-		Print "4. TopUp Balance, 0. Return to Main Menu"
+		Print "4. TopUp Balance, 5. View Receipt, 0. Return to Main Menu"
 		Read choice
 
 		CASE choice OF
-			Case 1: call ViewOwnInfo(STUDENT studentUser)
-			Case 2: call EditOwnInfo(STUDENT studentUser)
-			Case 3: call PlaceOrder(STUDENT studentUser)
-			Case 4: call TopUpBalance(STUDENT studentUser)
-			Case 0: Print "Returning to Main Menu"
+			Case 1: call ViewOwnInfo()
+			Case 2: call EditOwnInfo()
+			Case 3: call PlaceOrder()
+			Case 4: call TopUpBalance()
+			Case 5: call PrintCheck()
+			Case 0:
+				Print "Returning to Main Menu"
+				call UpdateDatabase()
+				call main()
 		OTHERWISE
 			Print "Invalid Input"
 		ENDCASE
-	Until choice == 5
+	Until choice == 0
 	return
 EndFunction
 
-SubFunction ViewOwnInfo(STUDENT studentUser)
-	OPENFILE stuinfo.txt FOR READ
+SubFunction ViewOwnInfo()
+	Print "Student Information:"
 
-	READFILE stuinfo.txt, studentUser.fName
-	READFILE stuinfo.txt, studentUser.lName
-	READFILE stuinfo.txt, studentUser.email
-	READFILE stuinfo.txt, studentUser.grade
-	READFILE stuinfo.txt, studentUser.ID
-	READFILE stuinfo.txt, studentUser.payMethod
-	READFILE stuinfo.txt, studentUser.balance
+	Print "ID: ", studentUser.ID
+	Print "LASTNAME: ", studentUser.lName
+	Print "FIRSTNAME: ", studentUser.fName
+	Print "GRADE: ", studentUser.grade
+	Print "PAY METHOD: ", studentUser.payMethod
+	Print "BALANCE: ", studentUser.balance
+	Print "A/C NUMBER: ", userCreds.accNum
 
-	Print "Name: ", studentUser.fName, " ", studentUser.lName, " Email: ", studentUser.email, " Grade: ", studentUser.grade, " ID: ", studentUser.ID
-	Print "Payment Method: ", studentUser.payMethod, " Current Balance: $ ", studentUser.balance
-	CLOSEFILE stuinfo.txt
-	return Student()
 EndFunction
 
-SubFunction EditOwnInfo(STUDENT studentUser)
-	Declare accountNum as integer
+SubFunction EditOwnInfo()
 	success = 0
-
-	OPENFILE stuinfo.txt for APPEND
 
 	Repeat
 		Print "Choose Payment Method: "
-		Print "1. Visa, 2. NCB Quisk, 3. Paymaster, 4. PayPal, 5. Cash (Payment at Canteen/Bursary)
-		Print "6. Remove Info, 0. Return to Student Menu"
+		Print "1. Visa, 2. NCB Quisk, 3. Paymaster, 4. PayPal"
+		Print "5. Payoneer, 6. Cash (Payment at Canteen/Bursary)"
+		Print "7. Remove Info, 0. Return to Student Menu"
 		Read choice
 
 		CASE choice OF
 			Case 1:
-				Print "Enter account number: "
-				Read accountNum
-				studentUser.payMethod <-- "Visa"
-				WRITEFILE stuinfo.txt, studentUser.payMethod
+				Print "Enter account number and PIN number: "
+				Read userCreds.accNum, userCreds.PIN
 
-				Print "Payment Method Successfully Changed to Visa!!!"
+				studentUser.payMethod <-- "Visa"				
+
+				Print "Payment Method Successfully Changed to ", studentUser.payMethod
 			Case 2:
-				Print "Enter account number: "
-				Read accountNum
-				studentUser.payMethod <-- "NCB Quisk"
-				WRITEFILE stuinfo.txt, studentUser.payMethod
+				Print "Enter account number and PIN number: "
+				Read userCreds.accNum, userCreds.PIN
+
+				studentUser.payMethod <-- "Quisk"				
 				
-				Print "Payment Method Successfully Changed to NCB Quisk!!!"
+				Print "Payment Method Successfully Changed to ", studentUser.payMethod
 			Case 3:
-				Print "Enter account number: "
-				Read accountNum
-				studentUser.payMethod <-- "Paymaster"
-				WRITEFILE stuinfo.txt, studentUser.payMethod
+				Print "Enter account number and PIN number: "
+				Read userCreds.accNum, userCreds.PIN
+
+				studentUser.payMethod <-- "Paymaster"				
 				
-				Print "Payment Method Successfully Changed to Paymaster!!!"
+				Print "Payment Method Successfully Changed to ", studentUser.payMethod
 			Case 4:
-				Print "Enter account number: "
-				Read accountNum
-				studentUser.payMethod <-- "PayPal"
-				WRITEFILE stuinfo.txt, studentUser.payMethod
+				Print "Enter account number and PIN number: "
+				Read userCreds.accNum, userCreds.PIN
+
+				studentUser.payMethod <-- "PayPal"				
 				
-				Print "Payment Method Successfully Changed to PayPal!!!"
+				Print "Payment Method Successfully Changed to ", studentUser.payMethod
+			Case 4:
+				Print "Enter account number and PIN number: "
+				Read userCreds.accNum, userCreds.PIN
+
+				studentUser.payMethod <-- "PayPal"				
+				
+				Print "Payment Method Successfully Changed to ", studentUser.payMethod
 			Case 5:
-				studentUser.payMethod <-- "Cash"
-				WRITEFILE stuinfo.txt, studentUser.payMethod
+				Print "Enter account number and PIN number: "
+				Read userCreds.accNum, userCreds.PIN
+
+				studentUser.payMethod <-- "Payoneer"				
 				
-				Print "Payment Method Successfully Changed to Cash!!!"				
+				Print "Payment Method Successfully Changed to ", studentUser.payMethod				
 			Case 6:
+				studentUser.payMethod <-- "Cash"
+				
+				
+							Case 4:
+				Print "Enter account number and PIN number: "
+				Read userCreds.accNum, userCreds.PIN
+
+				studentUser.payMethod <-- "PayPal"				
+				
+				Print "Payment Method Successfully Changed to ", studentUser.payMethod		
+			Case 7:
 				studentUser.payMethod <-- ""
-				WRITEFILE stuinfo.txt, studentUser.payMethod
+				
 				Print "Payment Method Successfully Removed!!!"
 			Case 0:
 				success <-- 1
@@ -253,8 +287,9 @@ SubFunction EditOwnInfo(STUDENT studentUser)
 	return Student()
 EndFunction
 
-SubFunction TopUpBalance(STUDENT studentUser)
+SubFunction TopUpBalance()
 	Declare amount as real
+	Declare accNum, PIN as integer
 	Declare success <-- 0
 
 	If (studentUser.payMethod = "Cash") Then
@@ -262,91 +297,48 @@ SubFunction TopUpBalance(STUDENT studentUser)
 		call Student()
 	Endif
 
-	Repeat
-		Print "Select the amount you want to top up: "
-		Print "1. 500, 2. 1000, 3. 2000, 4. 5000, 0. Return to Student Menu"
-		Read choice
+	Print "Select the amount you want to top up: "
+	Print "1. 500, 2. 1000, 3. 2000, 4. 5000, 0. Return to Student Menu"
+	Read choice
 
-		CASE choice OF
-			Case 1: amount <-- 500.0
-			Case 2: amount <-- 1000.0
-			Case 3: amount <-- 2000.0
-			Case 4: amount <-- 5000.0
-			Case 0:
-				success <-- 1
-				Print "Returning to Student Menu"
-				call Student()
-		OTHERWISE
-			Print "Invalid input: Select 1 to 4 only"
-		ENDCASE
+	CASE choice OF
+		Case 1: amount <-- 500.0
+		Case 2: amount <-- 1000.0
+		Case 3: amount <-- 2000.0
+		Case 4: amount <-- 5000.0
+		Case 0:
+			success <-- 1
+			Print "Returning to Student Menu"
+			call Student()
+	OTHERWISE
+		Print "Invalid input: Select 1 to 4 only"
+	ENDCASE
 
-		Print "Choose Method of Payment"
-		Print "1. Visa, 2. NCB Quisk, 3. Paymaster, 4. PayPal"
+	Print "Enter account number and PIN number: "
+	Read accNum, PIN
 
-		CASE choice OF
-			Case 1:
-				Print "Enter PIN number: "
-				Read choice
+	If (accNum = userCreds.accNum AND PIN = userCreds.PIN) Then
+		studentUser.balance = studentUser.balance + amount
 
-				studentUser.balance = studentUser.balance + amount
+		Print "Transaction Successful!!!"
+		Print "Current Balance: $", studentUser.balance
 
-				Print "Transaction Successful!!!"
-				Print "Payment Method: Visa"
-				Print "Amount Tendered: $ ", amount
-				Print "Current Balance: $ ", studentUser.Balance
-			Case 2:
-				Print "Enter phone number: "
-				Read choice
-
-				studentUser.balance = studentUser.balance + amount
-
-				Print "Transaction Successful!!!"
-				Print "Payment Method: NCB Quisk"
-				Print "Amount Tendered: $ ", amount
-				Print "Current Balance: $ ", studentUser.Balance
-			Case 3:
-				Print "Enter PIN number: "
-				Read choice
-
-				studentUser.balance = studentUser.balance + amount
-
-				Print "Transaction Successful!!!"
-				Print "Payment Method: Paymaster"
-				Print "Amount Tendered: $ ", amount
-				Print "Current Balance: $ ", studentUser.Balance
-			Case 4:
-				Print "Enter PIN number: "
-				Read choice
-
-				studentUser.balance = studentUser.balance + amount
-
-				Print "Transaction Successful!!!"
-				Print "Payment Method: PayPal"
-				Print "Amount Tendered: $ ", amount
-				Print "Current Balance: $ ", studentUser.Balance
-		OTHERWISE
-			Print "Invalid input: Select 1 to 4 only"
-		ENDCASE
-	Until success == 1
-
+	Else
+		Print "Error: Invalid credentials"
+	
+	Endif
 EndFunction
 
-Function PlaceOrder(STUDENT studentUser)
+Function PlaceOrder()
 	Declare c as character
-	Declare itemName, day, availDay as string
-	Declare price as real
+	Declare day as string
 	Declare success = 0
-	Declare lunchNum = 0
-	Declare i = 0
-	Declare totalPrice = 0.0
-	Declare lunches: ARRAY[0:2] of LUNCH
 	Declare receiptInfo of RECEIPT
-	Declare receiptName as string
 
 	receiptName = studentUser.name + " receipt.txt"
 	OPENFILE Lunch Menu.txt FOR READ
 	
-	OPENFILE receiptName FOR APPEND
+	OPENFILE receiptName FOR WRITE
 
 	WRITEFILE receiptName, "Name: ", studentUser.name
 	WRITEFILE receiptName, "ID #: ", studentUser.ID
@@ -362,11 +354,21 @@ Function PlaceOrder(STUDENT studentUser)
 		Read choice
 
 		CASE choice OF
-			Case 1: day <-- "Monday"
-			Case 2: day <-- "Tuesday"
-			Case 3: day <-- "Wednesday"
-			Case 4: day <-- "Thursday"
-			Case 5: day <-- "Friday
+			Case 1:
+				day <-- "Monday"
+				monCount = monCount + 1
+			Case 2:
+				day <-- "Tuesday"
+				tuesCount = tuesCount + 1
+			Case 3:
+				day <-- "Wednesday"
+				wedCount = wedCount + 1
+			Case 4:
+				day <-- "Thursday"
+				thurCount = thurCount + 1
+			Case 5:
+				day <-- "Friday
+				friCount = friCount + 1
 			Case 6:
 				success <-- 1
 				WRITEFILE receipt.text, "Total Amount: $ ", receiptInfo.totalPrice
@@ -384,143 +386,142 @@ Function PlaceOrder(STUDENT studentUser)
 					Read choice
 					CASE choice OF
 						Case 1:
-							OPENFILE Weekly Menu.txt FOR READ
 							Print day, " Lunch Menu"
-							While (READFILE Weekly Menu.txt, itemName, price, availDay <> -1) DO
-								lunchNum = lunchNum + 1
-								IF (availDay == day) THEN
-									lunches[i].name <-- itemName
-									lunches[i].price <-- price
-									lunches[i].availDay <-- availDay
-									Print lunchNum, " ", lunches[i].name, " $", lunches[i].price
-									i = i + 1
-								Endif						
-							Endwhile					
+
+							For (i = 0, j = 1, i to 4, j to 5)
+								Print j, lunches[i].name, lunches[i].price
+							Endfor
+
+							Print "Choose option"
 							Read choice
+							
 							CASE choice OF
 								Case 1:
-									WRITEFILE receipt.txt, lunches[0].name, " $", lunches[0].price
+									WRITEFILE receipt.txt, lunches[0].name, " - $", lunches[0].price
 									receiptInfo.totalPrice = receiptInfo.totalPrice + lunches[0].price
 								Case 2:
-									WRITEFILE receipt.txt, lunches[1].name, " $", lunches[1].price
+									WRITEFILE receipt.txt, lunches[1].name, " - $", lunches[1].price
 									receiptInfo.totalPrice = receiptInfo.totalPrice + lunches[1].price
 								Case 3:
-									WRITEFILE receipt.txt, lunches[2].name, " $", lunches[2].price
+									WRITEFILE receipt.txt, lunches[2].name, " - $", lunches[2].price
 									receiptInfo.totalPrice = receiptInfo.totalPrice + lunches[2].price
+								Case 4:
+									WRITEFILE receipt.txt, lunches[3].name, " - $", lunches[3].price
+									receiptInfo.totalPrice = receiptInfo.totalPrice + lunches[3].price
+								Case 5:
+									WRITEFILE receipt.txt, lunches[4].name, " - $", lunches[4].price
+									receiptInfo.totalPrice = receiptInfo.totalPrice + lunches[4].price									
 							OTHERWISE
-								Print "Invalid input. Select 1 to 3 only."
+								Print "Invalid input. Select 1 to 5 only."
 							ENDCASE
-							CLOSEFILE Weekly Menu.txt
 						Case 2:
-							OPENFILE Patties Menu.txt FOR READ
-							Declare patties: Array[0:5] of ITEM
-							While (READFILE Patties Menu.txt, patties[i].name, patties[i].price <> -1) DO
-								lunchNum = lunchNum + 1
-								Print lunchNum, " ", patties[i].name, " ", patties.price
-							Endwhile
+							Print day, " Patties Menu"
+
+							For (i = 0 to 4, j = 1 to 5) Do
+								Print j, patties[i].name, patties[i].price
+							Endfor
+
+							Print "Choose option"
 							Read choice
+							
 							CASE choice OF
 								Case 1:
-									WRITEFILE receipt.txt, patties[0].name, patties[0].price
+									WRITEFILE receipt.txt, patties[0].name, " - $", patties[0].price
 									receiptInfo.totalPrice = receiptInfo.totalPrice + patties[0].price
 								Case 2:
-									WRITEFILE receipt.txt, patties[1].name, patties[1].price
+									WRITEFILE receipt.txt, patties[1].name, " - $", patties[1].price
 									receiptInfo.totalPrice = receiptInfo.totalPrice + patties[1].price
 								Case 3:
-									WRITEFILE receipt.txt, patties[2].name, patties[2].price
+									WRITEFILE receipt.txt, patties[2].name, " - $", patties[2].price
 									receiptInfo.totalPrice = receiptInfo.totalPrice + patties[2].price
 								Case 4:
-									WRITEFILE receipt.txt, patties[3].name, patties[3].price
+									WRITEFILE receipt.txt, patties[3].name, " - $", patties[3].price
 									receiptInfo.totalPrice = receiptInfo.totalPrice + patties[3].price
 								Case 5:
-									WRITEFILE receipt.txt, patties[4].name, patties[4].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + patties[4].price
-								Case 6:
-									WRITEFILE receipt.txt, patties[5].name, patties[5].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + patties[5].price
+									WRITEFILE receipt.txt, patties[4].name, " - $", patties[4].price
+									receiptInfo.totalPrice = receiptInfo.totalPrice + patties[4].price									
 							OTHERWISE
-								Print "Invalid Input: Select 1 to 6 only"																			
+								Print "Invalid input. Select 1 to 5 only."
 							ENDCASE
-							CLOSE Patties Menu.txt
 						Case 3:
-							OPENFILE Pastries Menu.txt FOR READ
-							Declare pastries: Array[0:4] of ITEM
-							While (READFILE Pastries Menu.txt, pastries[i].name, pastries[i].price <> -1) DO
-								lunchNum = lunchNum + 1
-								Print lunchNum, " ", pastries[i].name, " ", pastries.price
-							Endwhile
+							Print day, " Pastries Menu"
+
+							For (i = 0, j = 1, i to 4, j to 5)
+								Print j, pastries[i].name, pastries[i].price
+							Endfor
+
+							Print "Choose option"
 							Read choice
+							
 							CASE choice OF
 								Case 1:
-									WRITEFILE receipt.txt, pastries[0].name, pastries[0].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + pastries[0].price
+									WRITEFILE receipt.txt, pastries[0].name, " - $", pastries[0].price
+									receiptInfo.totalPrice = receiptInfo.totalPrice + lunches[0].price
 								Case 2:
-									WRITEFILE receipt.txt, pastries[1].name, pastries[1].price
+									WRITEFILE receipt.txt, pastries[1].name, " - $", pastries[1].price
 									receiptInfo.totalPrice = receiptInfo.totalPrice + pastries[1].price
 								Case 3:
-									WRITEFILE receipt.txt, pastries[2].name, pastries[2].price
+									WRITEFILE receipt.txt, pastries[2].name, " - $", pastries[2].price
 									receiptInfo.totalPrice = receiptInfo.totalPrice + pastries[2].price
 								Case 4:
-									WRITEFILE receipt.txt, pastries[3].name, pastries[3].price
+									WRITEFILE receipt.txt, pastries[3].name, " - $", pastries[3].price
 									receiptInfo.totalPrice = receiptInfo.totalPrice + pastries[3].price
 								Case 5:
-									WRITEFILE receipt.txt, pastries[4].name, pastries[4].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + pastries[4].price
+									WRITEFILE receipt.txt, pastries[4].name, " - $", pastries[4].price
+									receiptInfo.totalPrice = receiptInfo.totalPrice + pastries[4].price									
 							OTHERWISE
-								Print "Invalid Input: Select 1 to 5 only"																			
+								Print "Invalid input. Select 1 to 5 only."
 							ENDCASE
-							CLOSE Pastries Menu.txt
 						Case 4:
-							OPENFILE Beverage Menu.txt FOR READ
-							Declare beverages: Array[0:6] of ITEM
-							While (READFILE Beverage Menu.txt, beverages[i].name, beverages[i].price <> -1) DO
-								lunchNum = lunchNum + 1
-								Print lunchNum, " ", beverages[i].name, " ", beverages.price
-							Endwhile
+							Print day, " Beverages Menu"
+
+							For (i = 0, j = 1, i to 4, j to 5)
+								Print j, drinks[i].name, drinks[i].price
+							Endfor
+
+							Print "Choose option"
 							Read choice
+							
 							CASE choice OF
 								Case 1:
-									WRITEFILE receipt.txt, beverages[0].name, beverages[0].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + beverages[0].price
+									WRITEFILE receipt.txt, drinks[0].name, " - $", drinks[0].price
+									receiptInfo.totalPrice = receiptInfo.totalPrice + lunches[0].price
 								Case 2:
-									WRITEFILE receipt.txt, beverages[1].name, beverages[1].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + beverages[1].price
+									WRITEFILE receipt.txt, drinks[1].name, " - $", drinks[1].price
+									receiptInfo.totalPrice = receiptInfo.totalPrice + drinks[1].price
 								Case 3:
-									WRITEFILE receipt.txt, beverages[2].name, beverages[2].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + beverages[2].price
+									WRITEFILE receipt.txt, drinks[2].name, " - $", drinks[2].price
+									receiptInfo.totalPrice = receiptInfo.totalPrice + drinks[2].price
 								Case 4:
-									WRITEFILE receipt.txt, beverages[3].name, beverages[3].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + beverages[3].price
+									WRITEFILE receipt.txt, drinks[3].name, " - $", drinks[3].price
+									receiptInfo.totalPrice = receiptInfo.totalPrice + drinks[3].price
 								Case 5:
-									WRITEFILE receipt.txt, beverages[4].name, beverages[4].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + beverages[4].price
-								Case 6:
-									WRITEFILE receipt.txt, beverages[5].name, beverages[5].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + beverages[5].price
-								Case 7:
-									WRITEFILE receipt.txt, beverages[6].name, beverages[6].price
-									receiptInfo.totalPrice = receiptInfo.totalPrice + beverages[6].price								
+									WRITEFILE receipt.txt, drinks[4].name, " - $", drinks[4].price
+									receiptInfo.totalPrice = receiptInfo.totalPrice + drinks[4].price									
 							OTHERWISE
-								Print "Invalid Input: Select 1 to 7 only"																			
+								Print "Invalid input. Select 1 to 5 only."
 							ENDCASE
-							CLOSE Beverage Menu.txt
-						Case 5: break								
+						Case 0:
+							Print "Returning to Order Menu"
+							break
 					ENDCASE
-				Until choice == 5
+				Until choice == 0
 		ENDCASE
-		lunchNum <-- 0
-		i <-- 0
 	Until success == 1
 
 	CLOSEFILE Lunch Menu.txt
-	CLOSEFILE receiptName
-	Call Payment(RECEIPT receiptInfo)	
+	CLOSEFILE receiptName.txt
+	
+	Print "Initiating Payment Process..."
+	Call Payment()	
 EndFunction
 
-SubFunction Payment(RECEIPT receiptInfo)
+SubFunction Payment()
 	Declare c as character
+	success = 0
 	OPENFILE receipt.txt FOR APPEND and READ
 
+	Print "Receipt: "
 	While (READFILE receipt.txt, c <> -1) DO
 		Print c
 	Endwhile
@@ -537,21 +538,24 @@ SubFunction Payment(RECEIPT receiptInfo)
 			Else
 				WRITEFILE receipt.txt, "Amount Tendered: $", receiptInfo.totalPrice
 				studentUser.balance = studentUser.balance - receiptInfo.totalPrice
+				WRITEFILE receipt.txt, "Pay Method: ", studentUser.payMethod
 
 				Print "Transaction Successful. Printing Receipt..."
 			Endif
 		Case 2:
-			WRITEFILE receipt.txt, "Amount Tendered: $", receiptInfo.totalPrice, " (On Credit)"
+			WRITEFILE receipt.txt, "Amount Tendered: $", receiptInfo.totalPrice
+			WRITEFILE receipt.txt, "Pay Method: Cash"
+
 			Print "Transaction Successful. Printing Receipt..."
 	OTHERWISE
 		Print "Invalid input: Select 1 to 2 only."
 	ENDCASE
 
 	CLOSEFILE receipt.txt
-	Call PrintCheck(receiptInfo)
+	Call PrintCheck()
 EndFunction
 
-SubFunction PrintCheck(RECEIPT receiptInfo)
+SubFunction PrintCheck()
 	Declare c as character
 	OPENFILE receipt.txt FOR READ
 
@@ -562,15 +566,42 @@ SubFunction PrintCheck(RECEIPT receiptInfo)
 EndFunction
 
 Function Staff()
+    Declare success as integer
+    Declare ID as string
+    index = 0
 	Repeat
 		Print "1. View Student Database, 2. Search Student Record"
+		Print "3. Add Student Record, 4. Edit Student Record"
+		Print "5. Remove Student Record, 6. View Lunch Orders"
 		Print "0. Return to Main Menu"
 		Read choice
 
 		Case choice OF
 			Case 1: call ViewStuDatabase()
-			Case 2: call ViewLunchInfo()
-			Case 3: call ViewLunchOrders()
+			Case 2:
+                Print "Enter ID: "
+                Read ID
+                index = SearchRecord(ID)
+
+                If(index = -1) Then
+                    Print "Error: Record not found. Be sure to input a valid ID"
+                Else
+                    Print "Record Successfully Found at Record", index
+                Endif
+            Case 3:
+                call AddRecord()
+            Case 4:
+				Print "Enter Student ID: "
+				Read ID
+
+                call EditRecord(ID)		
+            Case 5:
+				Print "Enter the ID of the record you want to remove: "
+				Read ID
+
+                call RemoveRecord(ID)
+            Case 6:
+                call OrderCount()										
 			Case 0: "Returning to Main Menu"
 		OTHERWISE
 			Print "Invalid Input"
@@ -580,12 +611,205 @@ Function Staff()
 EndFunction
 
 SubFunction ViewStuDatabase()
-	Declare stu as STUDENT
-	OPENFILE sturecords.txt FOR READ
+	Declare i as integer
 
-	Print "Name			Email  			Grade  		ID"
-	While (READFILE sturecords.txt, stu.name, stu.email, stu.grade, stu.ID, stu.payMethod, stu.balance <> -1) DO
-		Print stu.name, stu.email, stu.grade, stu.ID
+	Print "STUDENT DATABASE"
+	Print "ID	LASTNAME	FIRSTNAME	GRADE	PAY METHOD	BALANCE"
+
+	For (i = 0 to currSize) Do
+		Print s[i].ID, s[i].lName, s[i].fName, s[i].grade, s[i].payMethod, s[i].balance
+	Endfor
+EndFunction
+
+SubFunction SearchRecord(ID as integer)
+	Declare i as integer
+
+	For (i = 0 to currSize) Do
+		If (ID = s[i].ID) Then
+			Print "ID: ", s[i].ID
+			Print "LASTNAME: ", s[i].lName
+			Print "FIRSTNAME: ", s[i].fName
+			Print "GRADE: ", s[i].grade
+			Print "PAY METHOD: ", s[i].payMethod
+			Print "BALANCE: ", s[i].balance
+
+			return i
+	Endfor
+
+	return -1
+EndFunction
+
+SubFunction AddRecord()
+	Declare i as integer
+
+	Print "Please enter the information"
+
+	Print "ID: "
+	Read s[currSzie].ID
+
+	For (i = 0 to currSize-1) Do
+		If (s[currSize].ID = s[i.ID]) Then
+			Print "Error: Cannot create record with an existing ID"
+			call Staff()
+		Endif
+	Endfor
+
+	Print "LASTNAME: "
+	Read s[currSzie].lName
+	Print "FIRSTNAME: "
+	Read s[currSzie].fName
+	Print "GRADE: "
+	Read s[currSzie].grade
+	Print "PASSWORD (16 character limit): "
+	Read stuCreds[currSize].StuPWords
+
+	s[currSize].payMethod = "N/A"
+	stuCreds[currSize].ID = s[currSize].ID
+	s[currSize].balance = 0.0
+
+	currSize = currSize + 1
+
+	Print "Record added successfully !!!"
+EndFunction
+
+SubFunction EditRecord(ID)
+	index = SearchRecord(ID)
+
+	If (index < 0) Then
+		Print "Error: Student not found. Enter a valid ID"
+		call Staff()
+	Endif
+
+	Print "Which changes would you like to make?"
+	Print "1. Surname, 2. First Name, 3. Grade"
+	Read choice
+
+	CASE choice OF
+		Case 1:
+			Print "Surname: "
+			Read s[index].lName
+		Case 1:
+			Print "First Name: "
+			Read s[index].fName
+		Case 1:
+			Print "Grade: "
+			Read s[index].grade
+	OTHERWISE
+		Print "Invalid input: Enter the corresponding number only"
+	ENDCASE
+
+	Print "Record Successfully Updated"
+
+	call SearchRecord(ID)		
+EndFunction
+
+SubFunction RemoveRecord(ID)
+	i = 0
+
+	index = SearchRecord(ID)
+
+	Print "Are you sure you want to remove this record?"
+	Print "1. Yes, 2. No"
+	Read choice
+
+	CASE choice OF
+		Case 1:
+			s[index].ID = 0
+			s[index].lName = ""
+			s[index].fName = ""
+			s[index].grade = 0
+			s[index].payMethod = ""
+			s[index].balance = 0.0
+
+			stuCreds[index].ID = 0
+			stuCreds[index].StuPWords = ""
+			stuCreds[index].accNum = 0
+			stuCreds[index].PIN = 0
+
+			For (i = index to currSize) Do
+				temp = s[i]
+				s[i] = s[i+1]
+				s[i+1] = temp
+
+				temp2 = stuCreds[i]
+				stuCreds[i] = stuCreds[i+1]
+				stuCreds[i+1] = temp
+			Endfor
+
+			currSize = currSize - 1
+
+			Print "Record removed successfully!!"
+
+		Case 0:
+			call Staff
+	OTHERWISE
+		Print "Invalid input: Enter the corresponding number only"
+	ENDCASE
+EndFunction
+
+SubFunction OrderCount()
+	OPENFILE ordercount.txt for READ
+
+	READFILE, monCount
+	READFILE, tuesCount
+	READFILE, wedCount
+	READFILE, thurCount
+	READFILE, friCount
+
+	Print "Monday Orders: ", monCount
+    Print "Tuesday Orders: ", tuesCount
+    Print "Wednesday Orders: ", wedCount
+    Print "Thursday Orders: ", thurCount
+    Print "Friday Orders: ", friCount
+
+	CLOSEFILE ordercount.txt
+
+	call Staff()
+EndFunction
+
+SubFunction ReadDatabase()
+	i = 0
+
+	OPENFILE sturecords.txt for READ
+	OPENFILE studcreds.txt for READ
+	OPENFILE Weekly Menu.txt for READ
+	OPENFILE Patties Menu.txt for READ
+	OPENFILE Pastries Menu.txt for READ
+	OPENFILE Beverage Menu.txt for READ
+
+	While (READFILE sturecords.txt, c <> -1) DO
+		READFILE 
 	Endwhile
-	CLOSEFILE sturecords.txt
+EndFunction
+
+SubFunction UpdateDatabase()
+	i = 0
+
+	OPENFILE sturecords.txt for WRITE
+	OPENFILE studcreds.txt for WRITE
+
+	While (i < currSize) DO
+		If (studentUser.ID == s[i].ID) Then
+			s[i] <-- studentUser
+            stuCreds[i] <-- userCreds
+		Endif
+
+		If (s[i].ID = 0) Then
+			i = currSize
+		Else
+			WRITEFILE sturecords.txt, s[i].ID
+			WRITEFILE sturecords.txt, s[i].lName
+			WRITEFILE sturecords.txt, s[i].fName
+			WRITEFILE sturecords.txt, s[i].grade
+			WRITEFILE sturecords.txt, s[i].payMethod
+			WRITEFILE sturecords.txt, s[i].balance
+
+			WRITEFILE studcreds.txt, stuCreds[i].ID
+			WRITEFILE studcreds.txt, stuCreds[i].StuPWords
+			WRITEFILE studcreds.txt, stuCreds[i].accNum
+			WRITEFILE studcreds.txt, stuCreds[i].PIN
+
+		Endif
+
+	Endwhile
 EndFunction

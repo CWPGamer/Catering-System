@@ -7,16 +7,12 @@
 Poultry:
   Fried Chicken
   Barbi-Fry Chicken
-  Curry Chicken
 
 Other Meats:
-  Stew Beef
   Stew Pork
-  Curry Mutton
 
 Seafood:
   Fried Fish
-  Steam Fish
 
 Vegetarian:
   Chick Peas
@@ -28,7 +24,6 @@ Beef - $250
 Chicken - $250
 Soy - $250
 Cheese - $340
-Meatloaf - $350
 Coco Bread - $85
 --------------------------------
            PASTRIES
@@ -45,9 +40,7 @@ Cheese Bread - $150
 
 Cran-Wata - $130
 Coca-Cola - $120
-Gatorade - $185
 Freshhh - $160
 Bag Juice - $50
 Water - $100
-Tea - $110
 --------------------------------
