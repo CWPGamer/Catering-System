@@ -1,5 +1,5 @@
 Beef_Patty 250
 Chicken_Patty 250
-Soy_Patty 250
+Power_Patty 250
 Cheese_Patty 340
 Coco_Bread 85

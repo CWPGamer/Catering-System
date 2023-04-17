@@ -1,5 +1,5 @@
 Spice_Bun 150
-Marble_Cake 160
+Marble_Slice 160
 Jelly_Donut 120
 Cinnamon_Danish 160
 Cheese_Bread 150
