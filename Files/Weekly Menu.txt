@@ -1,5 +1,5 @@
 Fried_Chicken 500
 Fried_Fish 500
-Stew_Pork 500
+Stew_Beef 500
 Chick_Peas 500
 Barbi_Fry_Chicken 500

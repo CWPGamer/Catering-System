@@ -1,7 +1,5 @@
-Cran-Wata 130
-Coca-Cola 120
-Gatorade 185
+Cran_Wata 130
+Coca_Cola 120
 Freshhh 160
-Bag Juice 50
+Bag_Juice 50
 Water 100
-Tea 110
