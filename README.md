@@ -2,7 +2,7 @@
 
 This project serves as the Programming Component of our CAPE Computer Science Internal Assessment.
 
-## Module Breakdown (95% Complete)
+## Module Breakdown (100% Complete)
 
 1. [x] Sign In
     - [x] Sign In Student
@@ -13,7 +13,7 @@ This project serves as the Programming Component of our CAPE Computer Science In
     - [x] TopUp Balance
 3. [x] Staff
     - [x] View Student Database
-    - [] Search Student Record
+    - [x] Search Student Record
 4. [x] Place Order
     - [x] Payment Process
 5. [x] Print Check
@@ -29,7 +29,8 @@ NB: Modules with an asterisk (*) mean that they are the same.
 - pastriesmenu.txt
 - beveragemenu.txt
 - receipt.txt
-- stuinfo.txt
+- studcreds.txt
+- ordercount.txt
 
 ## Pseudocode To-do List
 
